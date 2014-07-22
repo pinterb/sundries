@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+###
+# Create Ansible local facts
+#
+# This is just a thin wrapper around the symlink command
+###
+
+ANSIBLE_FACTS_DIR="/etc/ansible/facts.d"
+
+function usage()
+{
+    echo ""
+    echo -e "Create Ansible local facts symbolic link"
+    echo ""
+    echo -e "./$0 'source file name' 'fact name'"
+    echo ""
+}
+
+if [ ! -d "$ANSIBLE_FACTS_DIR" ]; then
+  echo "$ANSIBLE_FACTS_DIR is missing.  Local Ansible facts are not being used!!!"
+  usage
+  exit 1
+fi
+
+if [ $# -eq 0 ]; then
+  echo "No arguments supplied."
+  usage
+  exit 1
+fi
+
+if [ -z "$1" ]; then
+  echo "No source file argument supplied."
+  usage
+  exit 1
+fi
+
+if [ -z "$2" ]; then
+  echo "No fact name argument supplied."
+  usage
+  exit 1
+fi
+
+if [ ! -f "$1" ]; then
+  echo "$1 does not exist."
+  usage
+  exit 1
+fi
+
+#ln -s new current_tmp && mv -Tf current_tmp current
+
+FP=`pwd`/"$1"
+ln -s $FP $ANSIBLE_FACTS_DIR/$2_tmp && mv -Tf $ANSIBLE_FACTS_DIR/$2_tmp $ANSIBLE_FACTS_DIR/$2.fact
+
+exit 0
